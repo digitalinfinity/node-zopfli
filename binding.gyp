@@ -46,13 +46,14 @@
           }
         }
       },
-
+      'cflags!': [ '-fno-exceptions' ],
+      'cflags_cc!': [ '-fno-exceptions' ],      
       "target_name": "<(module_name)",
       'lflags': ['-lm'],
       "include_dirs": [
         "zopfli/src/zopfli",
         "zopfli/src/zopflipng",
-        "<!(node -e \"require('nan')\")"
+        "<!@(node -p \"require('node-addon-api').include\")"
       ],
       "sources": [
         "src/zopfli-binding.cc",
@@ -81,7 +82,10 @@
     {
       "target_name": "action_after_build",
       "type": "none",
-      "dependencies": ["<(module_name)"],
+      "dependencies": [
+        "<(module_name)",
+        "<!(node -p \"require('node-addon-api').gyp\")"
+      ],
       "copies": [
         {
           "files": ["<(PRODUCT_DIR)/<(module_name).node"],
